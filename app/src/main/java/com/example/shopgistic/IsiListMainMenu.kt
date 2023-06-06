@@ -1,4 +1,6 @@
 package com.example.shopgistic
 
-data class IsiListMainMenu(val title : String, val logo : Int)
-data class IsiListGoodsBeras(val title : String, val logo : Int)
+import android.net.Uri
+
+data class IsiListMainMenu(val title : String, val logo : Uri)
+//data class IsiListGoodsBeras(val title : String, val logo : Uri)

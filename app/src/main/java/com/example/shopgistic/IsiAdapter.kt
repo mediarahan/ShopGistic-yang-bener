@@ -6,25 +6,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 private const val VIEW_TYPE_MAIN_MENU = 0
 private const val VIEW_TYPE_GOODS_BERAS = 1
 
 
-class IsiAdapter<T> (var mList: List<T>) :
-    RecyclerView.Adapter<IsiAdapter<T>.IsiListViewHolder>() {
+class IsiAdapter(val mList: ArrayList<IsiListMainMenu>) :
+    RecyclerView.Adapter<IsiAdapter.IsiListViewHolder>() {
 
     inner class IsiListViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val logo : ImageView = itemView.findViewById(R.id.logoIv)
         val titleTv : TextView = itemView.findViewById(R.id.titleTv)
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return when (mList[position]) {
-            is IsiListMainMenu -> VIEW_TYPE_MAIN_MENU
-            is IsiListGoodsBeras -> VIEW_TYPE_GOODS_BERAS
-            else -> throw IllegalArgumentException("Invalid item type at position $position")
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IsiListViewHolder {
@@ -43,16 +36,17 @@ class IsiAdapter<T> (var mList: List<T>) :
     }
 
     override fun onBindViewHolder(holder: IsiListViewHolder, position: Int) {
-        when(val item = mList[position]) {
+        val item = mList[position]
+        holder.titleTv.text = item.title
+
+
+        when (item) {
             is IsiListMainMenu -> {
-                holder.logo.setImageResource(item.logo)
-                holder.titleTv.text = item.title
+                Glide.with(holder.itemView)
+                    .load(item.logo)
+                    .into(holder.logo)
             }
-            is IsiListGoodsBeras -> {
-                holder.logo.setImageResource(item.logo)
-                holder.titleTv.text = item.title
-            }
+            // Add other cases for different item types if necessary
         }
     }
-
 }

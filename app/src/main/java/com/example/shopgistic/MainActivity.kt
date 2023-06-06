@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import com.bumptech.glide.Glide
 
 //array kategori produk ada disini
 
@@ -20,9 +18,9 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
             val userInput = data?.getStringExtra("userInput")
-            val pictureResId = data?.getStringExtra("pictureUri")
-            val convertUri = Uri.parse(pictureResId)
-            val item = IsiListMainMenu(userInput ?: "", R.drawable.padidankapas)
+            val pictureUri = data?.getStringExtra("pictureUri")
+            val selectedImageUri = Uri.parse(pictureUri)
+            val item = IsiListMainMenu(userInput ?: "", selectedImageUri)
             mList.add(item)
             adapter.notifyItemInserted(mList.size - 1)
         }
@@ -30,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private var mList = ArrayList<IsiListMainMenu>()
-    private lateinit var adapter: IsiAdapter<IsiListMainMenu>
+    private lateinit var adapter: IsiAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,10 +60,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addDataToList(){
-        mList.add(IsiListMainMenu("Beras dan Bahan Pokok", R.drawable.padidankapas))
-        mList.add(IsiListMainMenu("Daging dan Ikan", R.drawable.dagingikan))
-        mList.add(IsiListMainMenu("Sayuran dan Buah - Buahan", R.drawable.sayurbuah))
-        mList.add(IsiListMainMenu("Produk Susu dan Telur", R.drawable.susutelur))
-        mList.add(IsiListMainMenu("Makanan Siap Saji", R.drawable.siapsaji))
+
     }
 }

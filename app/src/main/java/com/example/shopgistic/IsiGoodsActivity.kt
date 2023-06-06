@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class IsiGoodsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private var mList = ArrayList<IsiListGoodsBeras>()
-    private lateinit var adapter: IsiAdapter<IsiListGoodsBeras>
+    private var mList = ArrayList<IsiListMainMenu>()
+    private lateinit var adapter: IsiAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +24,7 @@ class IsiGoodsActivity : AppCompatActivity() {
     }
 
     private fun addDataToList() {
-        mList.add(IsiListGoodsBeras("Beras", R.drawable.padidankapas))
-        mList.add(IsiListGoodsBeras("Jagung", R.drawable.padidankapas))
-        mList.add(IsiListGoodsBeras("Singkong", R.drawable.padidankapas))
+
     }
 }
 
