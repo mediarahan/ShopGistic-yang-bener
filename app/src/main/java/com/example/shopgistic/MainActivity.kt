@@ -29,11 +29,11 @@ class MainActivity : AppCompatActivity() {
             db.beginTransaction()
             try {
                 val values = ContentValues().apply {
-                    put(DatabaseContract.IsiListTable.COLUMN_TITLE, userInput ?: "")
-                    put(DatabaseContract.IsiListTable.COLUMN_LOGO, pictureUri ?: "")
+                    put(DatabaseContract.CategoryTable.COLUMN_TITLE, userInput ?: "")
+                    put(DatabaseContract.CategoryTable.COLUMN_LOGO, pictureUri ?: "")
                 }
 
-                val rowId = db.insert(DatabaseContract.IsiListTable.TABLE_NAME, null, values)
+                val rowId = db.insert(DatabaseContract.CategoryTable.TABLE_NAME, null, values)
                 Log.d("Database", "Inserted row ID: $rowId")
 
                 // Set the transaction as successful
@@ -98,12 +98,12 @@ class MainActivity : AppCompatActivity() {
         dbRead.beginTransaction()
         try {
             val projection = arrayOf(
-                DatabaseContract.IsiListTable.COLUMN_TITLE,
-                DatabaseContract.IsiListTable.COLUMN_LOGO
+                DatabaseContract.CategoryTable.COLUMN_TITLE,
+                DatabaseContract.CategoryTable.COLUMN_LOGO
             )
 
             val cursor = dbRead.query(
-                DatabaseContract.IsiListTable.TABLE_NAME,
+                DatabaseContract.CategoryTable.TABLE_NAME,
                 projection,
                 null,
                 null,
@@ -113,8 +113,8 @@ class MainActivity : AppCompatActivity() {
             )
 
             while (cursor.moveToNext()) {
-                val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_TITLE))
-                val logoUriString = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_LOGO))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.CategoryTable.COLUMN_TITLE))
+                val logoUriString = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.CategoryTable.COLUMN_LOGO))
                 val logoUri = Uri.parse(logoUriString)
 
                 val item = IsiListMainMenu(title, logoUri)
