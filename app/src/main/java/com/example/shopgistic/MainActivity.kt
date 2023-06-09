@@ -3,16 +3,17 @@ package com.example.shopgistic
 import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
-import android.provider.ContactsContract.Data
 import android.util.Log
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+
 
 class MainActivity : AppCompatActivity() {
     // Database stuff
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val rowId = db.insert(DatabaseContract.CategoryTable.TABLE_NAME, null, values)
-                Log.d("Database", "Inserted row ID: $rowId")
+                //Log.d("Database", "Inserted row ID: $rowId")
 
                 // Set the transaction as successful
                 db.setTransactionSuccessful()
@@ -75,9 +76,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Button to launch input menu
-        val clickToInputMenu = findViewById<Button>(R.id.goodsCategoryInputButton)
+        val clickToInputMenu = findViewById<FloatingActionButton>(R.id.addCategory)
         clickToInputMenu.setOnClickListener {
-            val intent = Intent(this, GoodsInput::class.java)
+            val intent = Intent(this, GoodsCategoryInput::class.java)
             goodsInputLauncher.launch(intent)
         }
 

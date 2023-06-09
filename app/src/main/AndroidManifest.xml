@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".IsiGoodsActivity"></activity>
+        <activity android:name=".GoodsCategoryInput"></activity>
         <activity android:name=".GoodsInput"></activity>
 
     </application>
