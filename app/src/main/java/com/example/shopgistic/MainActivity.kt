@@ -38,11 +38,14 @@ class MainActivity : AppCompatActivity() {
 
                 // Set the transaction as successful
                 db.setTransactionSuccessful()
-            } finally {
+            }
+            finally {
                 // End the transaction
-                db.close()
-                dbRead.close()
                 db.endTransaction()
+
+                // Close the database connections
+                //db.close()
+                //dbRead.close()
             }
 
             addDataToList() // Refresh the list after inserting new data
@@ -92,30 +95,40 @@ class MainActivity : AppCompatActivity() {
     private fun addDataToList() {
         mList.clear() // Clear the list before populating it again
 
-        val projection = arrayOf(
-            DatabaseContract.IsiListTable.COLUMN_TITLE,
-            DatabaseContract.IsiListTable.COLUMN_LOGO
-        )
+        dbRead.beginTransaction()
+        try {
+            val projection = arrayOf(
+                DatabaseContract.IsiListTable.COLUMN_TITLE,
+                DatabaseContract.IsiListTable.COLUMN_LOGO
+            )
 
-        val cursor = dbRead.query(
-            DatabaseContract.IsiListTable.TABLE_NAME,
-            projection,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+            val cursor = dbRead.query(
+                DatabaseContract.IsiListTable.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
 
-        while (cursor.moveToNext()) {
-            val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_TITLE))
-            val logoUriString = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_LOGO))
-            val logoUri = Uri.parse(logoUriString)
+            while (cursor.moveToNext()) {
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_TITLE))
+                val logoUriString = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.IsiListTable.COLUMN_LOGO))
+                val logoUri = Uri.parse(logoUriString)
 
-            val item = IsiListMainMenu(title, logoUri)
-            mList.add(item)
+                val item = IsiListMainMenu(title, logoUri)
+                mList.add(item)
+            }
+
+            cursor.close()
+
+            // Set the transaction as successful
+            dbRead.setTransactionSuccessful()
+        } finally {
+            // End the transaction
+            dbRead.endTransaction()
         }
-
-        cursor.close()
     }
+
 }
