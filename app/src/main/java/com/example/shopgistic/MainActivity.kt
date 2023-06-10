@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
 
     override fun onItemClick(item: IsiListMainMenu) {
         val intent = Intent(this, IsiGoodsActivity::class.java)
-        intent.putExtra("categoryId", item.categoryId)
         startActivity(intent)
     }
 

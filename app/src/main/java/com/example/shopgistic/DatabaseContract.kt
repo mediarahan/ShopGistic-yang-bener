@@ -33,7 +33,7 @@ object DatabaseContract {
     // SQL statement for creating the Subcategory table
     const val SQL_CREATE_PRODUCT_TABLE = """
     CREATE TABLE ${ProductTable.TABLE_NAME} (
-        ${ProductTable.COLUMN_PRODUCT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${ProductTable.COLUMN_PRODUCT_LOGO} TEXT,
         ${ProductTable.COLUMN_PRODUCT_NAME} TEXT,
         ${ProductTable.COLUMN_PRODUCT_WEIGHT} REAL,
@@ -45,6 +45,7 @@ object DatabaseContract {
         ON UPDATE CASCADE
     )
 """
+
 
 
     // ... other table definitions and SQL statements ...

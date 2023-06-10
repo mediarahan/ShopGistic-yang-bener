@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+
+
+
 class IsiGoodsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private val mList = ArrayList<IsiListDetailProduk>()
@@ -29,6 +32,7 @@ class IsiGoodsActivity : AppCompatActivity() {
             val pictureUri = data?.getStringExtra("pictureUri") ?: ""
             val price = data?.getFloatExtra("price", 0.0f) ?: 0.0f
             val weight = data?.getFloatExtra("weight", 0.0f) ?: 0.0f
+            val categoryId = data?.getIntExtra(DatabaseContract.ProductTable.COLUMN_CATEGORY_ID,0)
 
             db.beginTransaction()
             try {
@@ -37,7 +41,7 @@ class IsiGoodsActivity : AppCompatActivity() {
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_LOGO, pictureUri)
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_PRICE, price.toString())
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT, weight.toString())
-                    put(DatabaseContract.ProductTable.COLUMN_PRODUCT_ID, categoryId.toString())
+                    put(DatabaseContract.ProductTable.COLUMN_CATEGORY_ID, categoryId)
                 }
 
                 val rowId = db.insert(DatabaseContract.ProductTable.TABLE_NAME, null, values)
@@ -97,7 +101,7 @@ class IsiGoodsActivity : AppCompatActivity() {
             )
 
             val selection =
-                "${DatabaseContract.ProductTable.COLUMN_PRODUCT_ID} = ?"
+                "${DatabaseContract.ProductTable.COLUMN_CATEGORY_ID} = ?"
             val selectionArgs = arrayOf(categoryId.toString())
 
             val cursor = dbRead.query(
@@ -116,7 +120,7 @@ class IsiGoodsActivity : AppCompatActivity() {
                 val logoUri = Uri.parse(logoUriString)
                 val price = cursor.getFloat(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_PRICE))
                 val weight = cursor.getFloat(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT))
-                val categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_ID))
+                val categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_CATEGORY_ID))
 
                 val item = IsiListDetailProduk(title, logoUri, price, weight,categoryId)
                 mList.add(item)
