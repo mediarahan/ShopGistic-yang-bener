@@ -11,71 +11,51 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.util.Log
-import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 
-
-class MainActivity : AppCompatActivity() {
-    // Database stuff
+class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
     private lateinit var dbHelper: DatabaseHelper
-    private lateinit var db: SQLiteDatabase
     private lateinit var dbRead: SQLiteDatabase
-
-    private val goodsInputLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val data: Intent? = result.data
-            val userInput = data?.getStringExtra("userInput")
-            val pictureUri = data?.getStringExtra("pictureUri")     //ini masih string
-
-            db.beginTransaction()
-            try {
-                val values = ContentValues().apply {
-                    put(DatabaseContract.CategoryTable.COLUMN_TITLE, userInput ?: "")
-                    put(DatabaseContract.CategoryTable.COLUMN_LOGO, pictureUri ?: "")
-                }
-
-                val rowId = db.insert(DatabaseContract.CategoryTable.TABLE_NAME, null, values)
-                //Log.d("Database", "Inserted row ID: $rowId")
-
-                // Set the transaction as successful
-                db.setTransactionSuccessful()
-            }
-            finally {
-                // End the transaction
-                db.endTransaction()
-
-                // Close the database connections
-                //db.close()
-                //dbRead.close()
-            }
-
-            addDataToList() // Refresh the list after inserting new data
-
-            adapter.notifyItemInserted(mList.size - 1)
-        }
-    }
 
     private lateinit var recyclerView: RecyclerView
     private val mList = ArrayList<IsiListMainMenu>()
     private lateinit var adapter: IsiAdapter
 
+    private val goodsInputLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data: Intent? = result.data
+            val userInput = data?.getStringExtra("userInput")
+            val pictureUri = data?.getStringExtra("pictureUri") ?: ""
+
+            dbRead.beginTransaction()
+            try {
+                val values = ContentValues().apply {
+                    put(DatabaseContract.CategoryTable.COLUMN_TITLE, userInput ?: "")
+                    put(DatabaseContract.CategoryTable.COLUMN_LOGO, pictureUri)
+                }
+
+                val rowId = dbRead.insert(DatabaseContract.CategoryTable.TABLE_NAME, null, values)
+                Log.d("Database", "Inserted row ID: $rowId")
+
+                // Set the transaction as successful
+                dbRead.setTransactionSuccessful()
+            } finally {
+                // End the transaction
+                dbRead.endTransaction()
+            }
+
+            addDataToList() // Refresh the list after inserting new data
+            adapter.notifyItemInserted(mList.size - 1)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize database
         dbHelper = DatabaseHelper(applicationContext)
-        db = dbHelper.writableDatabase
         dbRead = dbHelper.readableDatabase
 
-        // Button to navigate to another menu
-        val buttonClick = findViewById<Button>(R.id.button2)
-        buttonClick.setOnClickListener {
-            val intent = Intent(this, IsiGoodsActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Button to launch input menu
         val clickToInputMenu = findViewById<FloatingActionButton>(R.id.addCategory)
         clickToInputMenu.setOnClickListener {
             val intent = Intent(this, GoodsCategoryInput::class.java)
@@ -86,15 +66,19 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Initialize the list with data from the database
         addDataToList()
-
-        adapter = IsiAdapter(mList)
+        adapter = IsiAdapter(mList, this)
         recyclerView.adapter = adapter
     }
 
+    override fun onItemClick(item: IsiListMainMenu) {
+        val intent = Intent(this, IsiGoodsActivity::class.java)
+        intent.putExtra("categoryId", item.categoryId)
+        startActivity(intent)
+    }
+
     private fun addDataToList() {
-        mList.clear() // Clear the list before populating it again
+        mList.clear()
 
         dbRead.beginTransaction()
         try {
@@ -131,5 +115,4 @@ class MainActivity : AppCompatActivity() {
             dbRead.endTransaction()
         }
     }
-
 }

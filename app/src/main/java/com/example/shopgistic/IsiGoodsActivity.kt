@@ -37,6 +37,7 @@ class IsiGoodsActivity : AppCompatActivity() {
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_LOGO, pictureUri)
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_PRICE, price.toString())
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT, weight.toString())
+                    put(DatabaseContract.ProductTable.COLUMN_PRODUCT_ID, categoryId.toString())
                 }
 
                 val rowId = db.insert(DatabaseContract.ProductTable.TABLE_NAME, null, values)
@@ -54,9 +55,13 @@ class IsiGoodsActivity : AppCompatActivity() {
         }
     }
 
+    private var categoryId: Int = -1 // Property for storing categoryId
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.macammacamgoods)
+
+        categoryId = intent.getIntExtra("categoryId", -1)
 
         // Initialize database
         dbHelper = DatabaseHelper(applicationContext)
@@ -91,14 +96,18 @@ class IsiGoodsActivity : AppCompatActivity() {
                 DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT
             )
 
+            val selection =
+                "${DatabaseContract.ProductTable.COLUMN_PRODUCT_ID} = ?"
+            val selectionArgs = arrayOf(categoryId.toString())
+
             val cursor = dbRead.query(
                 DatabaseContract.ProductTable.TABLE_NAME,
                 projection,
+                selection,
+                selectionArgs,
                 null,
                 null,
                 null,
-                null,
-                null
             )
 
             while (cursor.moveToNext()) {
@@ -107,9 +116,9 @@ class IsiGoodsActivity : AppCompatActivity() {
                 val logoUri = Uri.parse(logoUriString)
                 val price = cursor.getFloat(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_PRICE))
                 val weight = cursor.getFloat(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT))
+                val categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.ProductTable.COLUMN_PRODUCT_ID))
 
-
-                val item = IsiListDetailProduk(title, logoUri,price,weight)
+                val item = IsiListDetailProduk(title, logoUri, price, weight,categoryId)
                 mList.add(item)
             }
 

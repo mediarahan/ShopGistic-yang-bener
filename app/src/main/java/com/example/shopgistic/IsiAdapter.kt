@@ -8,12 +8,28 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class IsiAdapter(val mList: ArrayList<IsiListMainMenu>) :
+class IsiAdapter(val mList: ArrayList<IsiListMainMenu>, private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<IsiAdapter.IsiListViewHolder>() {
 
-    inner class IsiListViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        val logo : ImageView = itemView.findViewById(R.id.logoIv)
-        val titleTv : TextView = itemView.findViewById(R.id.titleTv)
+    interface OnItemClickListener {
+        fun onItemClick(item: IsiListMainMenu)
+    }
+
+    inner class IsiListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val logo: ImageView = itemView.findViewById(R.id.logoIv)
+        val titleTv: TextView = itemView.findViewById(R.id.titleTv)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(view: View) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val clickedItem = mList[position]
+                itemClickListener.onItemClick(clickedItem)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IsiListViewHolder {
@@ -31,14 +47,8 @@ class IsiAdapter(val mList: ArrayList<IsiListMainMenu>) :
         val item = mList[position]
         holder.titleTv.text = item.title
 
-
-        when (item) {
-            // Add other cases for different item types if necessary
-            else -> {
-                Glide.with(holder.itemView)
-                    .load(item.logo)
-                    .into(holder.logo)
-            }
-        }
+        Glide.with(holder.itemView)
+            .load(item.logo)
+            .into(holder.logo)
     }
 }
