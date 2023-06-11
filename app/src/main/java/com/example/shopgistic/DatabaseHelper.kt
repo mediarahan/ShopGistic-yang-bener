@@ -14,6 +14,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS ${DatabaseContract.CategoryTable.TABLE_NAME}")
+        db.execSQL("DROP TABLE IF EXISTS ${DatabaseContract.ProductTable.TABLE_NAME}")
         // Drop other tables if needed using similar statements
         onCreate(db)
     }

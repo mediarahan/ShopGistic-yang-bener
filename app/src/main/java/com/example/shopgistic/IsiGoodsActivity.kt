@@ -12,39 +12,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-
-
-
 class IsiGoodsActivity : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private val mList = ArrayList<IsiListDetailProduk>()
-    private lateinit var adapter: IsiDetailProdukAdapter
-
     // Database stuff
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var db: SQLiteDatabase
     private lateinit var dbRead: SQLiteDatabase
 
+    private lateinit var recyclerView: RecyclerView
+    private val mList = ArrayList<IsiListDetailProduk>()
+    private lateinit var adapter: IsiDetailProdukAdapter
+
     private val goodsInputLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
             val userInput = data?.getStringExtra("userInput")
-            val pictureUri = data?.getStringExtra("pictureUri") ?: ""
-            val price = data?.getFloatExtra("price", 0.0f) ?: 0.0f
-            val weight = data?.getFloatExtra("weight", 0.0f) ?: 0.0f
+            val pictureUri = data?.getStringExtra("pictureUri") ?: ""           //untuk input gambar produk
+            val price = data?.getFloatExtra("price", 0.0f) ?: 0.0f    // untuk input harga produk
+            val weight = data?.getFloatExtra("weight", 0.0f) ?: 0.0f  // untuk input berat produk
             val categoryId = data?.getIntExtra(DatabaseContract.ProductTable.COLUMN_CATEGORY_ID,0)
 
             db.beginTransaction()
             try {
                 val values = ContentValues().apply {
-                    put(DatabaseContract.ProductTable.COLUMN_PRODUCT_NAME, userInput ?: "")
+                    put(DatabaseContract.ProductTable.COLUMN_PRODUCT_NAME, userInput)
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_LOGO, pictureUri)
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_PRICE, price.toString())
                     put(DatabaseContract.ProductTable.COLUMN_PRODUCT_WEIGHT, weight.toString())
                     put(DatabaseContract.ProductTable.COLUMN_CATEGORY_ID, categoryId)
                 }
 
-                val rowId = db.insert(DatabaseContract.ProductTable.TABLE_NAME, null, values)
+                val rowId = db.insertWithOnConflict(DatabaseContract.ProductTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE)
                 Log.d("Database Produk", "Inserted row ID: $rowId") // Check if the data is inserted successfully
 
                 // Set the transaction as successful
@@ -72,7 +69,7 @@ class IsiGoodsActivity : AppCompatActivity() {
         db = dbHelper.writableDatabase
         dbRead = dbHelper.readableDatabase
 
-        recyclerView = findViewById(R.id.recyclerViewGoods)
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -102,6 +99,7 @@ class IsiGoodsActivity : AppCompatActivity() {
 
             val selection =
                 "${DatabaseContract.ProductTable.COLUMN_CATEGORY_ID} = ?"
+
             val selectionArgs = arrayOf(categoryId.toString())
 
             val cursor = dbRead.query(

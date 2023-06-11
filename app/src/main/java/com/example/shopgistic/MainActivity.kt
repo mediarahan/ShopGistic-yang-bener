@@ -11,9 +11,11 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.util.Log
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
+    //database stuff
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var dbRead: SQLiteDatabase
 
@@ -24,8 +26,8 @@ class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
     private val goodsInputLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
-            val userInput = data?.getStringExtra("userInput")
-            val pictureUri = data?.getStringExtra("pictureUri") ?: ""
+            val userInput = data?.getStringExtra("userInput")           //untuk input nama produk
+            val pictureUri = data?.getStringExtra("pictureUri") ?: ""   //untuk input gambar produk
 
             dbRead.beginTransaction()
             try {
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
                 }
 
                 val rowId = dbRead.insert(DatabaseContract.CategoryTable.TABLE_NAME, null, values)
-                Log.d("Database", "Inserted row ID: $rowId")
+                Log.d("Database Kategori", "Inserted row ID: $rowId")
 
                 // Set the transaction as successful
                 dbRead.setTransactionSuccessful()
@@ -56,18 +58,26 @@ class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
         dbHelper = DatabaseHelper(applicationContext)
         dbRead = dbHelper.readableDatabase
 
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         val clickToInputMenu = findViewById<FloatingActionButton>(R.id.addCategory)
         clickToInputMenu.setOnClickListener {
             val intent = Intent(this, GoodsCategoryInput::class.java)
             goodsInputLauncher.launch(intent)
         }
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        //Buat Button Ke menu lain
+        val buttonClick = findViewById<Button>(R.id.button2)
+        buttonClick.setOnClickListener {
+            val intent = Intent(this, IsiGoodsActivity::class.java)
+            startActivity(intent)
+        }
 
         addDataToList()
-        adapter = IsiAdapter(mList, this)
+        adapter = IsiAdapter(mList, this) //pake this karena ada click listener
         recyclerView.adapter = adapter
     }
 
@@ -114,4 +124,8 @@ class MainActivity : AppCompatActivity(), IsiAdapter.OnItemClickListener {
             dbRead.endTransaction()
         }
     }
+
+
+
+
 }

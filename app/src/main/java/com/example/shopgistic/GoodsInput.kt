@@ -11,9 +11,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+//import com.bumptech.glide.Glide
+//import com.bumptech.glide.load.engine.DiskCacheStrategy
+//import com.bumptech.glide.request.RequestOptions
 
 class GoodsInput : AppCompatActivity() {
 
@@ -67,11 +67,11 @@ class GoodsInput : AppCompatActivity() {
         }
     }
 
-    private fun performActionWithUserInput(title: String, weight: Float, price: Float) {
+    private fun performActionWithUserInput(userInput: String, weight: Float, price: Float) {
         val pictureUriString = selectedImageUri?.toString()
 
         val resultIntent = Intent()
-        resultIntent.putExtra("userInput", title)
+        resultIntent.putExtra("userInput", userInput)
         resultIntent.putExtra("pictureUri", pictureUriString)
         resultIntent.putExtra("weight", weight)
         resultIntent.putExtra("price", price)
@@ -93,17 +93,17 @@ class GoodsInput : AppCompatActivity() {
         getContentLauncher.launch("image/*")
     }
 
-    private fun getImageResourceFromUri(uri: Uri): Uri {
-        val requestOptions = RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .dontTransform()
-
-        Glide.with(this)
-            .load(uri)
-            .apply(requestOptions)
-            .into(imageView)
-
-        return uri
-    }
+//    private fun getImageResourceFromUri(uri: Uri): Uri {
+//        val requestOptions = RequestOptions()
+//            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//            .dontTransform()
+//
+//        Glide.with(this)
+//            .load(uri)
+//            .apply(requestOptions)
+//            .into(imageView)
+//
+//        return uri
+//    }
 
 }
